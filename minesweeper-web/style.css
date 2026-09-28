@@ -1,0 +1,494 @@
+/* ==========================================================================
+   Minesweeper - CO3061 Introduction to Artificial Intelligence
+   HCMUT - VNU HCM
+
+   Stylesheet: colours, board grid and dialog styling.
+   Ported from the tkinter colour scheme used in minesweeper.py
+   ========================================================================== */
+
+/* ---- Design tokens: LIGHT theme (the default) ------------------------- */
+:root {
+    color-scheme: light;
+
+    --bg: #eef1f4;
+    --surface: #ffffff;
+    --surface-2: #e4e9ee;
+    --text: #22303c;
+    --text-dim: #64748b;
+    --border: #cbd5df;
+
+    --cell: #9aa8b4;
+    /* covered cell            */
+    --cell-hover: #8493a1;
+    --cell-open: #f3f6f8;
+    /* revealed cell           */
+    --cell-edge: #b9c5cf;
+
+    --accent: #2b6cb0;
+    /* buttons / timer         */
+    --accent-dark: #1f4e7f;
+    --danger: #d64541;
+    /* mines / game over       */
+    --ok: #2f9e5e;
+    /* win                     */
+    --flag: #e0902b;
+    /* flags / AI actions      */
+
+    /* Classic Minesweeper number colours (readable on --cell-open) */
+    --n1: #1d4ed8;
+    --n2: #15803d;
+    --n3: #dc2626;
+    --n4: #1e3a8a;
+    --n5: #9a3412;
+    --n6: #0f766e;
+    --n7: #111827;
+    --n8: #6b7280;
+
+    --radius: 10px;
+    --font-ui: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', ui-monospace, monospace;
+}
+
+/* ---- Design tokens: DARK theme --------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+
+        --bg: #161b22;
+        --surface: #1e252e;
+        --surface-2: #273039;
+        --text: #e6edf3;
+        --text-dim: #93a1b1;
+        --border: #333f4c;
+
+        --cell: #46535f;
+        --cell-hover: #55646f;
+        --cell-open: #232c35;
+        --cell-edge: #384450;
+
+        --accent: #4c9be8;
+        --accent-dark: #3b7fc4;
+        --danger: #f2645f;
+        --ok: #45c17d;
+        --flag: #f0a93f;
+
+        --n1: #6fa8ff;
+        --n2: #57cc84;
+        --n3: #ff7b7b;
+        --n4: #9db4ff;
+        --n5: #f0a06a;
+        --n6: #4fd1c5;
+        --n7: #e6edf3;
+        --n8: #a0aec0;
+    }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg: #161b22;
+    --surface: #1e252e;
+    --surface-2: #273039;
+    --text: #e6edf3;
+    --text-dim: #93a1b1;
+    --border: #333f4c;
+
+    --cell: #46535f;
+    --cell-hover: #55646f;
+    --cell-open: #232c35;
+    --cell-edge: #384450;
+
+    --accent: #4c9be8;
+    --accent-dark: #3b7fc4;
+    --danger: #f2645f;
+    --ok: #45c17d;
+    --flag: #f0a93f;
+
+    --n1: #6fa8ff;
+    --n2: #57cc84;
+    --n3: #ff7b7b;
+    --n4: #9db4ff;
+    --n5: #f0a06a;
+    --n6: #4fd1c5;
+    --n7: #e6edf3;
+    --n8: #a0aec0;
+}
+
+/* ---- Page layout ------------------------------------------------------ */
+* {
+    box-sizing: border-box;
+}
+
+/* Elements with the "hidden" attribute stay hidden even when a class below
+   gives them a display value (the dialogs use display:flex). */
+[hidden] {
+    display: none !important;
+}
+
+body {
+    margin: 0;
+    padding-block: 24px 40px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.subtitle {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.panel {
+    width: 100%;
+    max-width: 640px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ---- Grid size selector ----------------------------------------------- */
+.panel-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.size-btn,
+.ctrl-btn {
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.size-btn:hover,
+.ctrl-btn:hover {
+    background: var(--cell-edge);
+}
+
+.size-btn[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.ctrl-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.ctrl-btn.primary:hover {
+    background: var(--accent-dark);
+}
+
+.ctrl-btn.ai {
+    background: var(--flag);
+    border-color: var(--flag);
+    color: #fff;
+}
+
+.ctrl-btn.ai:hover {
+    filter: brightness(0.93);
+}
+
+.ctrl-btn.solve {
+    background: var(--ok);
+    border-color: var(--ok);
+    color: #fff;
+}
+
+.ctrl-btn.solve:hover {
+    filter: brightness(0.93);
+}
+
+.ctrl-btn.stop {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ---- Info bar: mine counter, timer, status ---------------------------- */
+#info-bar {
+    justify-content: space-between;
+}
+
+#control-bar {
+    justify-content: center;
+}
+
+.readout {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.readout .tag {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+#mine-count {
+    color: var(--danger);
+}
+
+#timer {
+    color: var(--accent);
+}
+
+#status {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-left: auto;
+}
+
+/* ---- Board ------------------------------------------------------------ */
+#board-wrap {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    justify-content: center;
+}
+
+#board {
+    --cell-size: 40px;
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 5), var(--cell-size));
+    gap: 2px;
+    padding: 8px;
+    background: var(--cell-edge);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    background: var(--cell);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: calc(var(--cell-size) * 0.52);
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16);
+    transition: background 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.cell:hover:not(.revealed) {
+    background: var(--cell-hover);
+}
+
+.cell.revealed {
+    background: var(--cell-open);
+    box-shadow: none;
+    cursor: default;
+}
+
+.cell.flagged {
+    background: var(--flag);
+}
+
+.cell.mine {
+    background: var(--danger);
+}
+
+.cell.flag-correct {
+    background: var(--ok);
+}
+
+.cell.flag-wrong {
+    background: var(--flag);
+}
+
+/* Number colours (mirrors NUMBER_COLORS in minesweeper.py) */
+.cell.n1 {
+    color: var(--n1);
+}
+
+.cell.n2 {
+    color: var(--n2);
+}
+
+.cell.n3 {
+    color: var(--n3);
+}
+
+.cell.n4 {
+    color: var(--n4);
+}
+
+.cell.n5 {
+    color: var(--n5);
+}
+
+.cell.n6 {
+    color: var(--n6);
+}
+
+.cell.n7 {
+    color: var(--n7);
+}
+
+.cell.n8 {
+    color: var(--n8);
+}
+
+/* ---- Legend ----------------------------------------------------------- */
+.legend {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 640px;
+}
+
+/* ---- Modal dialogs (custom size + end of game) ------------------------ */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 17, 23, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 10;
+}
+
+.modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    width: 100%;
+    max-width: 330px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.modal h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.field input {
+    width: 76px;
+    padding: 6px 8px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    text-align: right;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.hint {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.error {
+    font-size: 0.82rem;
+    color: var(--danger);
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+#result-title {
+    font-size: 1.25rem;
+}
+
+#result-title.win {
+    color: var(--ok);
+}
+
+#result-title.lose {
+    color: var(--danger);
+}
+
+#result-time {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
