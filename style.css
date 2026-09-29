@@ -31,8 +31,10 @@
     /* mines / game over       */
     --ok: #2f9e5e;
     /* win                     */
-    --flag: #e0902b;
-    /* flags / AI actions      */
+    --ai-step: #e0902b;
+    /* AI actions              */
+    --flag: #9aa8b4;
+    /* flags                   */
 
     /* Classic Minesweeper number colours (readable on --cell-open) */
     --n1: #1d4ed8;
@@ -44,7 +46,7 @@
     --n7: #111827;
     --n8: #6b7280;
 
-    --radius: 10px;
+    --radius: 0;
     --font-ui: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', 'Consolas', ui-monospace, monospace;
 }
@@ -54,7 +56,7 @@
     :root:not([data-theme="light"]) {
         color-scheme: dark;
 
-        --bg: #161b22;
+        --bg: #000000;
         --surface: #1e252e;
         --surface-2: #273039;
         --text: #e6edf3;
@@ -66,11 +68,12 @@
         --cell-open: #232c35;
         --cell-edge: #384450;
 
-        --accent: #4c9be8;
-        --accent-dark: #3b7fc4;
-        --danger: #f2645f;
-        --ok: #45c17d;
-        --flag: #f0a93f;
+        --accent: #74b9ff;
+        --accent-dark: #74b9ff;
+        --danger: #ff7772;
+        --ok: #6bffae;
+        --ai-step: #ffc267;
+        --flag: #46535f;
 
         --n1: #6fa8ff;
         --n2: #57cc84;
@@ -86,7 +89,7 @@
 :root[data-theme="dark"] {
     color-scheme: dark;
 
-    --bg: #161b22;
+    --bg: #000000;
     --surface: #1e252e;
     --surface-2: #273039;
     --text: #e6edf3;
@@ -98,11 +101,12 @@
     --cell-open: #232c35;
     --cell-edge: #384450;
 
-    --accent: #4c9be8;
-    --accent-dark: #3b7fc4;
-    --danger: #f2645f;
-    --ok: #45c17d;
-    --flag: #f0a93f;
+    --accent: #74b9ff;
+    --accent-dark: #74b9ff;
+    --danger: #ff7772;
+    --ok: #6bffae;
+    --ai-step: #ffc267;
+    --flag: #46535f;
 
     --n1: #6fa8ff;
     --n2: #57cc84;
@@ -127,9 +131,9 @@
 
 body {
     margin: 0;
-    padding-block: 24px 40px;
-    padding-left: 16px;
-    padding-right: 16px;
+    min-height: 100vh;
+    justify-content: center;
+    padding: 20px 16px;
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-ui);
@@ -189,7 +193,7 @@ h1 {
     font-size: 0.88rem;
     font-weight: 600;
     padding: 7px 14px;
-    border-radius: 7px;
+    border-radius: 0;
     border: 1px solid var(--border);
     background: var(--surface-2);
     color: var(--text);
@@ -219,8 +223,8 @@ h1 {
 }
 
 .ctrl-btn.ai {
-    background: var(--flag);
-    border-color: var(--flag);
+    background: var(--ai-step);
+    border-color: var(--ai-step);
     color: #fff;
 }
 
@@ -256,6 +260,16 @@ h1 {
 
 #control-bar {
     justify-content: center;
+}
+
+#size-bar {
+    position: relative;
+    justify-content: center;
+}
+
+#size-bar .panel-label {
+    position: absolute;
+    left: 14px;
 }
 
 .readout {
@@ -308,7 +322,7 @@ h1 {
     padding: 8px;
     background: var(--cell-edge);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 0;
 }
 
 .cell {
@@ -316,7 +330,7 @@ h1 {
     height: var(--cell-size);
     padding: 0;
     border: none;
-    border-radius: 3px;
+    border-radius: 0;
     background: var(--cell);
     color: #fff;
     font-family: var(--font-mono);
@@ -445,7 +459,7 @@ h1 {
     color: var(--text);
     background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 0;
 }
 
 .hint {
@@ -491,4 +505,22 @@ h1 {
     * {
         transition: none !important;
     }
+}
+
+/* Nut chuyen theme Sang/ Toi */
+.theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.theme-toggle:hover {
+    background: var(--surface-2);
 }

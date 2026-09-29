@@ -1,95 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Minesweeper</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Minesweeper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@700&display=swap">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header>
-    <h1>Minesweeper</h1>
-    <p class="subtitle">CO3061 &middot; Introduction to Artificial Intelligence &middot; HCMUT</p>
-</header>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
 
-<!-- Grid size selector: 5x5 / 9x9 / 16x16 / Custom -->
-<div class="panel" id="size-bar">
-    <span class="panel-label">Grid size</span>
-    <button class="size-btn" type="button" data-size="5x5" aria-pressed="true">5&times;5</button>
-    <button class="size-btn" type="button" data-size="9x9" aria-pressed="false">9&times;9</button>
-    <button class="size-btn" type="button" data-size="16x16" aria-pressed="false">16&times;16</button>
-    <button class="size-btn" type="button" data-size="Custom" aria-pressed="false">Custom</button>
-</div>
+    <header>
+        <h1>Minesweeper</h1>
+        <p class="subtitle">CO3061 &middot; Introduction to Artificial Intelligence &middot; HCMUT</p>
+    </header>
 
-<!-- Mine counter, timer and status text -->
-<div class="panel" id="info-bar">
-    <span class="readout"><span class="tag">Mines</span><span id="mine-count">000</span></span>
-    <span class="readout"><span class="tag">Time</span><span id="timer">000</span></span>
-    <span id="status">Click to start!</span>
-</div>
+    <!-- Grid size selector: 5x5 / 9x9 / 16x16 / Custom -->
+    <div class="panel" id="size-bar">
+        <span class="panel-label">Grid size</span>
+        <button class="size-btn" type="button" data-size="5x5" aria-pressed="true">5&times;5</button>
+        <button class="size-btn" type="button" data-size="9x9" aria-pressed="false">9&times;9</button>
+        <button class="size-btn" type="button" data-size="16x16" aria-pressed="false">16&times;16</button>
+        <button class="size-btn" type="button" data-size="Custom" aria-pressed="false">Custom</button>
+    </div>
 
-<!-- The board: cells are created by script.js -->
-<div id="board-wrap">
-    <div id="board"></div>
-</div>
+    <!-- Mine counter, timer and status text -->
+    <div class="panel" id="info-bar">
+        <span class="readout"><span class="tag">Mines</span><span id="mine-count">000</span></span>
+        <span class="readout"><span class="tag">Time</span><span id="timer">000</span></span>
+        <span id="status">Click to start!</span>
+    </div>
 
-<!-- Game controls -->
-<div class="panel" id="control-bar">
-    <button class="ctrl-btn primary" type="button" id="new-game-btn">New Game</button>
-    <button class="ctrl-btn ai" type="button" id="ai-step-btn">AI: One Step</button>
-    <button class="ctrl-btn solve" type="button" id="ai-auto-btn">AI: Auto Solve</button>
-</div>
+    <!-- The board: cells are created by script.js -->
+    <div id="board-wrap">
+        <div id="board"></div>
+    </div>
 
-<p class="legend">Left click: reveal &nbsp;|&nbsp; Right click: flag / unflag</p>
+    <!-- Game controls -->
+    <div class="panel" id="control-bar">
+        <button class="ctrl-btn primary" type="button" id="new-game-btn">New Game</button>
+        <button class="ctrl-btn ai" type="button" id="ai-step-btn">AI: One Step</button>
+        <button class="ctrl-btn solve" type="button" id="ai-auto-btn">AI: Auto Solve</button>
+    </div>
 
-<!-- Custom board dialog -->
-<div class="overlay" id="custom-overlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="custom-title">
-        <h2 id="custom-title">Custom board</h2>
+    <p class="legend">Left click: reveal &nbsp;|&nbsp; Right click: flag / unflag</p>
 
-        <label class="field" for="input-rows">
-            Rows (5&ndash;16)
-            <input type="number" id="input-rows" min="5" max="16" step="1" value="10">
-        </label>
-        <label class="field" for="input-cols">
-            Columns (5&ndash;16)
-            <input type="number" id="input-cols" min="5" max="16" step="1" value="10">
-        </label>
-        <label class="field" for="input-mines">
-            Mines (4&ndash;40)
-            <input type="number" id="input-mines" min="4" max="40" step="1" value="20">
-        </label>
+    <!-- Custom board dialog -->
+    <div class="overlay" id="custom-overlay" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="custom-title">
+            <h2 id="custom-title">Custom board</h2>
 
-        <p class="hint">A board keeps at least 9 mine-free cells, so the first
-            click and its 8 neighbours are always safe. On a 5&times;5 board that
-            allows at most 16 mines.</p>
-        <p class="error" id="custom-error"></p>
+            <label class="field" for="input-rows">
+                Rows (5&ndash;16)
+                <input type="number" id="input-rows" min="5" max="16" step="1" value="10">
+            </label>
+            <label class="field" for="input-cols">
+                Columns (5&ndash;16)
+                <input type="number" id="input-cols" min="5" max="16" step="1" value="10">
+            </label>
+            <label class="field" for="input-mines">
+                Mines (4&ndash;40)
+                <input type="number" id="input-mines" min="4" max="40" step="1" value="20">
+            </label>
 
-        <div class="modal-actions">
-            <button class="ctrl-btn" type="button" id="custom-cancel">Cancel</button>
-            <button class="ctrl-btn primary" type="button" id="custom-start">Start</button>
+            <p class="hint">A board keeps at least 9 mine-free cells, so the first
+                click and its 8 neighbours are always safe. On a 5&times;5 board that
+                allows at most 16 mines.</p>
+            <p class="error" id="custom-error"></p>
+
+            <div class="modal-actions">
+                <button class="ctrl-btn" type="button" id="custom-cancel">Cancel</button>
+                <button class="ctrl-btn primary" type="button" id="custom-start">Start</button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- End of game dialog -->
-<div class="overlay" id="result-overlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
-        <h2 id="result-title">You win!</h2>
-        <p class="hint" id="result-text">Every safe cell is uncovered.</p>
-        <p id="result-time">Time: 0 s</p>
-        <div class="modal-actions">
-            <button class="ctrl-btn" type="button" id="result-close">Close</button>
-            <button class="ctrl-btn primary" type="button" id="result-again">New Game</button>
+    <!-- End of game dialog -->
+    <div class="overlay" id="result-overlay" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+            <h2 id="result-title">You win!</h2>
+            <p class="hint" id="result-text">Every safe cell is uncovered.</p>
+            <p id="result-time">Time: 0 s</p>
+            <div class="modal-actions">
+                <button class="ctrl-btn" type="button" id="result-close">Close</button>
+                <button class="ctrl-btn primary" type="button" id="result-again">New Game</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

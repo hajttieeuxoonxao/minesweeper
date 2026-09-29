@@ -21,22 +21,33 @@
 
 'use strict';
 
+// Doc theme ngay khi tai trang (try/catch chong loi an danh)
+try {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+} catch (e) {
+    // Trinh duyet chan localStorage o che do an danh, bo qua khong gay loi
+}
+
+
 // =============================================================================
 // CONFIGURATION
 // =============================================================================
 
 // Fixed board presets: name -> [rows, cols, mines]
 const PRESETS = {
-    '5x5':   [5, 5, 4],
-    '9x9':   [9, 9, 10],
+    '5x5': [5, 5, 4],
+    '9x9': [9, 9, 10],
     '16x16': [16, 16, 40],
 };
 
 const CUSTOM_LABEL = 'Custom';
 
 // Allowed ranges for the Custom board (per assignment specification)
-const MIN_ROWS = 5,  MAX_ROWS = 16;
-const MIN_COLS = 5,  MAX_COLS = 16;
+const MIN_ROWS = 5, MAX_ROWS = 16;
+const MIN_COLS = 5, MAX_COLS = 16;
 const MIN_MINES = 4, MAX_MINES = 40;
 
 // The first click and its 8 neighbours are always safe, so a board must keep
@@ -183,7 +194,7 @@ class MinesweeperGame {
             attempts++;
             const minePositions = randomSample(candidates, mineCount);
             const result = simulateLogicSolve(this.rows, this.cols, mineCount,
-                                              minePositions, safeRow, safeCol);
+                minePositions, safeRow, safeCol);
             if (result.solved) {
                 bestPositions = minePositions;
                 solved = true;
@@ -797,30 +808,30 @@ const UI = {
 // ---- Element references -----------------------------------------------------
 
 const el = {
-    board:        document.getElementById('board'),
-    boardWrap:    document.getElementById('board-wrap'),
-    mineCount:    document.getElementById('mine-count'),
-    timer:        document.getElementById('timer'),
-    status:       document.getElementById('status'),
-    sizeButtons:  Array.from(document.querySelectorAll('.size-btn')),
-    newGameBtn:   document.getElementById('new-game-btn'),
-    aiStepBtn:    document.getElementById('ai-step-btn'),
-    aiAutoBtn:    document.getElementById('ai-auto-btn'),
+    board: document.getElementById('board'),
+    boardWrap: document.getElementById('board-wrap'),
+    mineCount: document.getElementById('mine-count'),
+    timer: document.getElementById('timer'),
+    status: document.getElementById('status'),
+    sizeButtons: Array.from(document.querySelectorAll('.size-btn')),
+    newGameBtn: document.getElementById('new-game-btn'),
+    aiStepBtn: document.getElementById('ai-step-btn'),
+    aiAutoBtn: document.getElementById('ai-auto-btn'),
 
     customOverlay: document.getElementById('custom-overlay'),
-    inputRows:     document.getElementById('input-rows'),
-    inputCols:     document.getElementById('input-cols'),
-    inputMines:    document.getElementById('input-mines'),
-    customError:   document.getElementById('custom-error'),
-    customStart:   document.getElementById('custom-start'),
-    customCancel:  document.getElementById('custom-cancel'),
+    inputRows: document.getElementById('input-rows'),
+    inputCols: document.getElementById('input-cols'),
+    inputMines: document.getElementById('input-mines'),
+    customError: document.getElementById('custom-error'),
+    customStart: document.getElementById('custom-start'),
+    customCancel: document.getElementById('custom-cancel'),
 
     resultOverlay: document.getElementById('result-overlay'),
-    resultTitle:   document.getElementById('result-title'),
-    resultText:    document.getElementById('result-text'),
-    resultTime:    document.getElementById('result-time'),
-    resultClose:   document.getElementById('result-close'),
-    resultAgain:   document.getElementById('result-again'),
+    resultTitle: document.getElementById('result-title'),
+    resultText: document.getElementById('result-text'),
+    resultTime: document.getElementById('result-time'),
+    resultClose: document.getElementById('result-close'),
+    resultAgain: document.getElementById('result-again'),
 };
 
 // ---- Game management --------------------------------------------------------
@@ -955,7 +966,7 @@ function updateCell(r, c) {
         }
     } else if (game.flagged[r][c]) {
         btn.classList.add('flagged');
-        btn.textContent = 'F';
+        btn.textContent = '🚩';
     }
 }
 
@@ -967,8 +978,8 @@ function setStatus(text, tone) {
     el.status.textContent = text;
     el.status.style.color = tone === 'win' ? 'var(--ok)'
         : tone === 'lose' ? 'var(--danger)'
-        : tone === 'ai' ? 'var(--flag)'
-        : 'var(--text-dim)';
+            : tone === 'ai' ? 'var(--flag)'
+                : 'var(--text-dim)';
 }
 
 function checkGameEnd() {
@@ -1002,7 +1013,7 @@ function revealAll() {
             if (game.mines[r][c]) {
                 if (game.flagged[r][c]) {
                     btn.classList.add('flag-correct');      // mine correctly flagged
-                    btn.textContent = 'F';
+                    btn.textContent = '🚩';
                 } else {
                     btn.classList.add('revealed', 'mine');
                     btn.textContent = '*';
@@ -1245,3 +1256,33 @@ el.board.addEventListener('contextmenu', (event) => event.preventDefault());
 // Start the first game.
 markSelectedSizeButton();
 newGame();
+
+// Nut bam chuyen theme
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+function updateThemeButtonIcon() {
+    if (!themeToggleBtn) return;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark' ||
+        (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    themeToggleBtn.textContent = isDark ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkNow = currentTheme ? currentTheme === 'dark' : systemDark;
+
+    const nextTheme = isDarkNow ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+
+    try {
+        localStorage.setItem('theme', nextTheme);
+    } catch (e) { }
+
+    updateThemeButtonIcon();
+}
+
+if (themeToggleBtn) {
+    updateThemeButtonIcon();
+    themeToggleBtn.addEventListener('click', toggleTheme);
+}
